@@ -1,0 +1,33 @@
+
+# Virtual environments
+.venv/
+venv/
+
+# Data (parquet file output from notebooks)
+data/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Jupyter
+.ipynb_checkpoints/
+
+# VS Code
+.vscode/
+
+# Temp / OS files
+*.tmp
+*.log
+*.bak
+~$*
+
+# Environment variables
+.env
+
+# dbt (local & generated artifacts)
+dbt/profiles.yml
+dbt/.user.yml
+dbt/target/
+dbt/logs/
+dbt/dbt_packages/
