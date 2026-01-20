@@ -2,11 +2,11 @@
 
 # Marketing Analytics Engineering Pipeline 🚀
 
-**End-to-end analytics engineering project** demonstrating a modern marketing analytics pipeline using cloud-native tools.
+**End-to-end analytics engineering project** demonstrating a modern marketing analytics pipeline using cloud tools.
 
 **raw event data → Python (EDA & batching) → Snowflake → dbt → Power BI**
 
-**Focus areas: incremental processing, clean modeling, attribution-aware analysis, and BI-ready datasets**
+Focus areas: incremental processing, clean modeling, attribution-aware analysis, and BI-ready datasets.
 
 * * *
 
