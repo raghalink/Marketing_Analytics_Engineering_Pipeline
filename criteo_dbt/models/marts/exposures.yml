@@ -1,0 +1,15 @@
+version: 2
+
+exposures:
+  - name: criteo_dashboard
+    label: criteo marketing Dashboard (Power BI)
+    type: dashboard
+    maturity: high
+    owner:
+      name: Raghavendra Prasad
+    description: >
+      3-page dashboard: Executive Overview, Campaign Performance, Attribution & Overexposure.Built on mart tables from dbt.
+      
+    depends_on:
+      - ref('fct_campaign_daily')
+      - ref('fct_overall_daily')

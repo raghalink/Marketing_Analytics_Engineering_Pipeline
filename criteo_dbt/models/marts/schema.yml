@@ -1,0 +1,22 @@
+models:
+  - name: fct_campaign_daily
+    description: "mart models for Criteo (one row per campaign per day)."
+    
+    columns:
+      - name: event_day_bucket
+        tests: [not_null]
+
+      - name: campaign_id
+        tests: [not_null]
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: ["event_day_bucket", "campaign_id"]
+
+  - name: fct_overall_daily
+    description: "mart models for Criteo (one row per day overall)."
+    
+    columns:
+      - name: event_day_bucket
+        tests: [not_null,unique]

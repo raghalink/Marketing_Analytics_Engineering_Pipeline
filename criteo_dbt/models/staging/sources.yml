@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: raw
+    database: MARKETING_DB
+    schema: RAW
+    tables:
+      - name: criteo_impressions
+        identifier: CRITEO_IMPRESSIONS

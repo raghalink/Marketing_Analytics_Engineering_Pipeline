@@ -1,0 +1,36 @@
+models:
+  - name: stg_criteo_impressions
+    description: "Staging models for Criteo data (one impression per row)."
+    
+    columns:
+      - name: event_ts 
+        tests: 
+        - not_null
+
+      - name: user_id
+        tests: [not_null]
+
+      - name: campaign_id
+        tests: [not_null]
+
+      - name: is_conversion
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              severity: warn
+      
+      - name: is_attributed
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              severity: warn
+
+      - name: is_click
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              severity: warn
+
