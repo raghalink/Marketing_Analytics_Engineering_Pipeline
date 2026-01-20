@@ -1,5 +1,3 @@
-&nbsp;
-
 * * *
 
 # Marketing Analytics Engineering Pipeline 🚀
@@ -9,7 +7,6 @@
 **raw event data → Python (EDA & batching) → Snowflake → dbt → Power BI**
 
 **Focus areas: incremental processing, clean modeling, attribution-aware analysis, and BI-ready datasets**
-
 
 * * *
 
