@@ -20,14 +20,13 @@ __pycache__/
 *.tmp
 *.log
 *.bak
-~$*
-
+logs/
 # Environment variables
 .env
 
 # dbt (local & generated artifacts)
-dbt/profiles.yml
-dbt/.user.yml
-dbt/target/
-dbt/logs/
-dbt/dbt_packages/
+criteo_dbt/profiles.yml
+criteo_dbt/.user.yml
+criteo_dbt/target/
+criteo_dbt/logs/
+criteo_dbt/dbt_packages/

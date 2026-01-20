@@ -1,55 +1,74 @@
+&nbsp;
+
+* * *
+
 # Marketing Analytics Engineering Pipeline 🚀
 
-Analytics engineering project built on the **Criteo Attribution Dataset**, focusing on campaign-level performance and attribution analysis.
+**End-to-end analytics engineering project** demonstrating a modern marketing analytics pipeline using cloud-native tools.
 
-The project follows a production-style analytics workflow and is currently implemented up to the **Python ingestion and preparation stage**.
+**raw event data → Python (EDA & batching) → Snowflake → dbt → Power BI**
+
+**incremental processing, clean modeling, attribution-aware analysis, and BI-ready datasets**
 
 * * *
 
 ## Key environment 🔧
 
-- **Python:** 3.11.9
+- **Python:** 3.11
     
-- **Dataset access:** Hugging Face `datasets` package
+- **Snowflake:** cloud data warehouse
+    
+- **dbt:** transformations & tests
+    
+- **Power BI:** Desktop (latest)
 
 * * *
 
-## How to run project ⚡
+## Repository structure 📁
 
-1. Create & activate virtual environment (Windows):
-python -m venv .venv && .venv\Scripts\activate
-
-2. Install Python dependencies:
-pip install -r requirements.txt
-
-3. Run notebooks in order:
-- 01_explore_raw.ipynb
-- 03_batch_and_export.ipynb
-
-Note:  
-`02_clean_prepare.ipynb` documents the cleaning logic, but the actual preparation code is implemented as a reusable module in `src/clean_prep.py` and is imported directly by `03_batch_and_export.ipynb`.   
-
-* * *
-
-## Data preparation (Python) ✨
-
-Performed using Pandas and a reusable preparation module.
-
-Key steps:
-
-- Raw dataset inspection and schema validation
-    
-- Removal of ML-specific and funnel-level columns
-    
-- Sentinel value handling (`-1 → NULL`)
-    
-- Stable dtype enforcement (nullable booleans and integers)
-    
-- Timestamp-based batching strategy
-    
-- Export of load-ready Parquet files  
-
-Prepared data artifacts are generated locally and intentionally excluded from version control.
+```text
+.
+├── notebooks/
+│   ├── 01_explore_raw.ipynb
+│   ├── 02_clean_prepare.ipynb
+│   └── 03_batch_and_export.ipynb
+├── src/
+│   └── clean_prep.py
+├── snowflake/
+│   ├── setup.sql
+│   ├── schema.sql
+│   ├── load_raw.sql
+│   ├── test_incremental_load_progress.sql
+│   └── test_no_duplicate_daily_keys.sql
+├── criteo_dbt/
+│   ├── dbt_project.yml
+│   ├── packages.yml
+│   ├── package-lock.yml
+│   ├── models/
+│   │   ├── staging/
+│   │   │   ├── sources.yml
+│   │   │   ├── schema.yml
+│   │   │   └── stg_criteo_impressions.sql
+│   │   └── marts/
+│   │       ├── fct_campaign_daily.sql
+│   │       ├── fct_overall_daily.sql
+│   │       ├── schema.yml
+│   │       └── exposures.yml
+│   └── tests/
+│       ├── test_fct_campaign_daily_sanity.sql
+│       ├── test_fct_overall_daily_sanity.sql
+│       └── test_stg_attributed_requires_conversion.sql
+├── dashboards/
+│   ├── criteo_dashboard.pbix
+│   ├── criteo_dashboard.pdf
+│   ├── criteo_dashboard-1.pdf
+│   ├── criteo_dashboard-2.pdf
+│   └── criteo_dashboard-3.pdf
+├── ETL_RUN_LOG.md
+├── requirements.txt
+├── README.md
+└── .gitignore
+```
 
 * * *
 
@@ -62,8 +81,155 @@ This project uses the **Criteo Attribution Dataset**, published with the followi
 > Proceedings of the AdKDD and TargetAd Workshop, KDD 2017, Halifax, NS, Canada.
 
 * * *
+## Data preparation (Python) ✨
+
+Python is used for **exploratory analysis, sanity checks, and batch preparation**, not business logic.
+
+Workflow:
+
+- **`01_explore_raw.ipynb`**
+    
+    - dataset exploration
+        
+    - schema inspection
+        
+    - sanity checks (duplicates, field stability)
+        
+- **`02_clean_prepare.ipynb`**
+    
+    - documents the cleaning and preparation logic
+        
+    - serves as a readable reference
+        
+- **`03_batch_and_export.ipynb`**
+    
+    - orchestrates batch splitting to simulate incremental loads
+        
+    - applies cleaning logic via the reusable module in `src/clean_prep.py`
+        
+    - enforces stable dtypes (e.g. nullable booleans)
+        
+    - removes ML-only and funnel-specific columns
+        
+    - exports batches for warehouse ingestion
+        
+
+All reusable logic is implemented in **`src/clean_prep.py`**.  
+No business logic or attribution logic is implemented in Python.
+
+* * *
+
+## Warehouse & modeling (Snowflake + dbt) 🧩
+
+### Snowflake
+
+- Raw data ingested via **incremental append**
+    
+- SQL scripts:
+    
+    - `setup.sql` – warehouse, database, schema setup
+        
+    - `schema.sql` – raw table definitions
+        
+    - `load_raw.sql` – incremental ingestion
+        
+- Validation queries:
+    
+    - `test_incremental_load_progress.sql`
+        
+    - `test_no_duplicate_daily_keys.sql`
+        
+
+These tests validate **incremental correctness and idempotency**.
+
+* * *
+
+### dbt
+
+- Layers: **staging → marts**
+    
+- Staging:
+    
+    - normalization of raw impressions data
+        
+    - schema enforcement and basic constraints
+        
+- BI-ready marts:
+    
+    - `fct_campaign_daily`
+        
+    - `fct_overall_daily`
+        
+- Core measures modeled upstream:
+    
+    - impressions, clicks, conversions
+        
+    - spend, attributed conversions, attributed value
+        
+- Tests validate:
+    
+    - daily grain correctness
+        
+    - consistency between attributed and non-attributed measures
+        
+
+The dataset provides **pre-attributed measures**, which are preserved and exposed for downstream analysis.
+
+#### dbt lineage graph
+
+Generated via `dbt docs generate`:
+
+![dbt Lineage Graph](images/dbt-dag.png)
+
+This graph shows the full transformation flow from raw sources → staging → marts → exposure.
+
+* * *
+
+## Dashboard (Power BI) 📊
+
+The Power BI dashboard is built **directly on dbt marts** and structured as a **three-page analytical narrative**.
+
+### 1 – Executive Overview
+
+High-level monitoring of spend, volume, and efficiency.
+![Executive Overview](images/dashboard_1.png)
+
+### 2 – Campaign Performance
+
+Campaign-level efficiency analysis including spend, CPA, and attributed CPA.
+![Campaign Performance](images/dashboard_2.png)
+
+### 3 – Attribution & Overexposure
+
+Analysis of **attributed vs non-attributed performance**, reach vs exposure, and over-targeting signals.
+![Attriution & Overexposure](images/dashboard_3.png)
+
+
+* * *
+
+### DAX & semantic layer
+
+Core measures and aggregations are defined upstream (dbt).
+
+This enforces a clean separation:
+
+- **dbt → single source of truth**
+    
+- **Power BI → analytics & visualization**
+    
+
+* * *
+
+## Versioning & milestones 🏷️
+
+| Version | Description |
+|------|------------|
+| **python-v1.0** | EDA, sanity checks, batching, and export logic |
+| **snowflake-v1.0** | Data warehouse,schema, incremental tests forincremental validation |
+| **dbt-v1.0** | BI-ready marts finalized |
+| **powerbi-v1.0** | Dashboard complete |
+| **v1.1.0** | End-to-end pipeline complete |
 
 ## Author
 
-Ragha  
-Analytics Engineering Portfolio Project
+Ragha, Junior Analytics Engineer(Analytic Engineering & BI) | Berlin, Germany
