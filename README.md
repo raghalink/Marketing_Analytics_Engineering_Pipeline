@@ -8,7 +8,8 @@
 
 **raw event data → Python (EDA & batching) → Snowflake → dbt → Power BI**
 
-**incremental processing, clean modeling, attribution-aware analysis, and BI-ready datasets**
+**Focus areas: incremental processing, clean modeling, attribution-aware analysis, and BI-ready datasets**
+
 
 * * *
 
@@ -60,10 +61,7 @@
 │       └── test_stg_attributed_requires_conversion.sql
 ├── dashboards/
 │   ├── criteo_dashboard.pbix
-│   ├── criteo_dashboard.pdf
-│   ├── criteo_dashboard-1.pdf
-│   ├── criteo_dashboard-2.pdf
-│   └── criteo_dashboard-3.pdf
+│   └── criteo_dashboard.pdf  
 ├── ETL_RUN_LOG.md
 ├── requirements.txt
 ├── README.md
@@ -74,6 +72,7 @@
 
 ## Dataset citation 📖
 
+The dataset is used as a single raw source and already contains pre-attributed conversion fields.
 This project uses the **Criteo Attribution Dataset**, published with the following paper:
 
 > Eustache, D., Meynet, J., Galland, P., & Lefortier, D. (2017).  
@@ -176,12 +175,11 @@ These tests validate **incremental correctness and idempotency**.
 The dataset provides **pre-attributed measures**, which are preserved and exposed for downstream analysis.
 
 #### dbt lineage graph
+This graph shows the full transformation flow from raw sources → staging → marts (BI-ready layer).
 
 Generated via `dbt docs generate`:
 
 ![dbt Lineage Graph](images/dbt-dag.png)
-
-This graph shows the full transformation flow from raw sources → staging → marts → exposure.
 
 * * *
 
@@ -202,14 +200,14 @@ Campaign-level efficiency analysis including spend, CPA, and attributed CPA.
 ### 3 – Attribution & Overexposure
 
 Analysis of **attributed vs non-attributed performance**, reach vs exposure, and over-targeting signals.
-![Attriution & Overexposure](images/dashboard_3.png)
+![Attribution & Overexposure](images/dashboard_3.png)
 
 
 * * *
 
 ### DAX & semantic layer
 
-Core measures and aggregations are defined upstream (dbt).
+DAX is intentionally limited to simple KPI derivations and presentation-layer calculations.Core measures and aggregations are defined upstream (dbt).
 
 This enforces a clean separation:
 
@@ -225,11 +223,11 @@ This enforces a clean separation:
 | Version | Description |
 |------|------------|
 | **python-v1.0** | EDA, sanity checks, batching, and export logic |
-| **snowflake-v1.0** | Data warehouse,schema, incremental tests forincremental validation |
+| **snowflake-v1.0** | Data warehouse schema and incremental load validation |
 | **dbt-v1.0** | BI-ready marts finalized |
 | **powerbi-v1.0** | Dashboard complete |
-| **v1.1.0** | End-to-end pipeline complete |
+| **v1.0.0** | End-to-end pipeline complete |
 
 ## Author
 
-Ragha, Junior Analytics Engineer(Analytic Engineering & BI) | Berlin, Germany
+Ragha, Junior Analytics Engineer (Analytic Engineering & BI) | Berlin, Germany
