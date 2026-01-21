@@ -227,4 +227,4 @@ This enforces a clean separation:
 
 ## Author
 
-Ragha, Junior Analytics Engineer (Analytic Engineering & BI) | Berlin, Germany
+Ragha (Analytic Engineering & BI) | Berlin, Germany
